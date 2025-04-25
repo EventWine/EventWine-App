@@ -16,7 +16,6 @@ class _RegisterPageState extends State<RegisterPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _confirmPasswordController = TextEditingController();
-  final TextEditingController _galponController = TextEditingController();
 
   void _register() async {
     if (_formKey.currentState!.validate() && _agreeToTerms) {
@@ -56,7 +55,6 @@ class _RegisterPageState extends State<RegisterPage> {
               _buildTextField(_emailController, "Correo electrónico", TextInputType.emailAddress),
               _buildTextField(_passwordController, "Contraseña", TextInputType.visiblePassword, isPassword: true),
               _buildTextField(_confirmPasswordController, "Confirmar contraseña", TextInputType.visiblePassword, isPassword: true),
-              _buildTextField(_galponController, "Nombre del galpón", TextInputType.text),
 
               CheckboxListTile(
                 title: Text("Acepto los términos y condiciones"),
