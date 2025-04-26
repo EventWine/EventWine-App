@@ -4,22 +4,19 @@ import 'package:shared_preferences/shared_preferences.dart';
 import "package:http/http.dart" as http;
 import 'package:eventwine/core/app_constants.dart';
 
-final Uri signUpUrl = Uri.parse
-    ('${AppConstants.baseURL}/api/auth/register');
+final Uri signUpUrl = Uri.parse('${AppConstants.baseURL}/api/auth/register');
+final Uri signInUrl = Uri.parse('${AppConstants.baseURL}/api/auth/login');
 
-final Uri signInUrl = Uri.parse
-    ('${AppConstants.baseURL}/api/auth/login');
-
-Future<String> registerUser(String name, String lastName, String email, String password) async {
+Future<String> registerUser(String username, String password, {required String role}) async {
   final requestData = {
-    'name': name,
-    'lastName': lastName,
-    'email': email,
+    'name': username,
+    'lastName': '',
+    'role': role,
     'password': password,
   };
 
   final headers = {"Content-Type": "application/json"};
-  
+
   print('Datos de registro: ${json.encode(requestData)}');
   print('Encabezados: $headers');
   print('URL de registro: $signUpUrl');
@@ -40,8 +37,7 @@ Future<String> registerUser(String name, String lastName, String email, String p
         print('Error al registrar usuario: $errorMessage');
         return "Error al registrar usuario: $errorMessage";
       } else {
-        print(
-            'Error al registrar usuario: Código de estado ${response.statusCode}');
+        print('Error al registrar usuario: Código de estado ${response.statusCode}');
         return "Error al registrar usuario: Código de estado ${response.statusCode}";
       }
     }
@@ -51,13 +47,13 @@ Future<String> registerUser(String name, String lastName, String email, String p
   }
 }
 
-Future<String> loginUser(String email, String password, BuildContext context) async {
+Future<String> loginUser(String username, String password, BuildContext context) async {
   try {
     final response = await http.post(
       signInUrl,
       headers: {"Content-Type": "application/json"},
       body: json.encode({
-        'email': email,
+        'username': username,
         'password': password,
       }),
     );
@@ -69,10 +65,8 @@ Future<String> loginUser(String email, String password, BuildContext context) as
 
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString('jwt_token', token);
-
       await prefs.setInt('userId', userId);
       await prefs.setString('user_id', userId.toString());
-
 
       Navigator.pushReplacementNamed(context, '/home');
 

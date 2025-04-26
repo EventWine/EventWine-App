@@ -10,10 +10,8 @@ class LoginPage extends StatefulWidget {
 
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
-
-  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-
   bool _isLoading = false;
   String _errorMessage = '';
 
@@ -25,13 +23,13 @@ class _LoginPageState extends State<LoginPage> {
       });
 
       final result = await loginUser(
-        _emailController.text.trim(),
+        _usernameController.text.trim(),
         _passwordController.text,
         context,
       );
 
-       setState(() {
-      _isLoading = false;
+      setState(() {
+        _isLoading = false;
       });
 
       if (result.toLowerCase().contains("exitoso")) {
@@ -48,43 +46,83 @@ class _LoginPageState extends State<LoginPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-      appBar: AppBar(title: const Text("Iniciar Sesión")),
-      body: Padding(
-        padding: const EdgeInsets.all(20.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              TextFormField(
-                controller: _emailController,
-                decoration: const InputDecoration(labelText: 'Correo electrónico'),
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Ingresa tu correo' : null,
-              ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: _passwordController,
-                decoration: const InputDecoration(labelText: 'Contraseña'),
-                obscureText: true,
-                validator: (value) =>
-                    value == null || value.isEmpty ? 'Ingresa tu contraseña' : null,
-              ),
-              const SizedBox(height: 24),
-              if (_errorMessage.isNotEmpty)
-                Text(
-                  _errorMessage,
-                  style: const TextStyle(color: Colors.red),
-                ),
-              _isLoading
-                  ? const CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _handleLogin,
-                      child: const Text("Iniciar sesión"),
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF9F6E9),
+              border: Border.all(color: Colors.brown, width: 2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Image.asset('assets/logo_eventwine.jpg', height: 100), // Ajusta la ruta
+                  const SizedBox(height: 20),
+                  _buildTextField(_usernameController, "Usuario"),
+                  const SizedBox(height: 16),
+                  _buildTextField(_passwordController, "Contraseña", isPassword: true),
+                  const SizedBox(height: 24),
+                  if (_errorMessage.isNotEmpty)
+                    Text(_errorMessage, style: const TextStyle(color: Colors.red)),
+                  const SizedBox(height: 16),
+                  _isLoading
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFD8B47C),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: const BorderSide(color: Colors.brown),
+                            ),
+                          ),
+                          onPressed: _handleLogin,
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                            child: Text(
+                              "Ingresar",
+                              style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, '/register'),
+                    child: const Text(
+                      "¿No tienes una cuenta? Regístrate",
+                      style: TextStyle(color: Colors.lightBlue),
                     ),
-            ],
+                  ),
+                ],
+              ),
+            ),
           ),
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField(TextEditingController controller, String label, {bool isPassword = false}) {
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.brown),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.brown, width: 2),
+        ),
+      ),
+      validator: (value) => (value == null || value.isEmpty) ? 'Campo obligatorio' : null,
     );
   }
 }

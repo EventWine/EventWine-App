@@ -2,30 +2,27 @@ import 'package:flutter/material.dart';
 import 'package:eventwine/feature/register_and_login/data/remote/user_service.dart';
 
 class RegisterPage extends StatefulWidget {
+  const RegisterPage({super.key});
+
   @override
-  _RegisterPageState createState() => _RegisterPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
 class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
-  bool _agreeToTerms = false;
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _roleController = TextEditingController();
   bool _isLoading = false;
 
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _lastNameController = TextEditingController();
-  final TextEditingController _emailController = TextEditingController();
-  final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController = TextEditingController();
-
   void _register() async {
-    if (_formKey.currentState!.validate() && _agreeToTerms) {
+    if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
       final responseMessage = await registerUser(
-        _nameController.text.trim(),
-        _lastNameController.text.trim(),
-        _emailController.text.trim(),
-        _passwordController.text,
+        _usernameController.text.trim(),
+        _passwordController.text.trim(),
+        role: _roleController.text.trim(),
       );
 
       setState(() => _isLoading = false);
@@ -35,7 +32,7 @@ class _RegisterPageState extends State<RegisterPage> {
       );
 
       if (responseMessage.contains('exitosamente')) {
-        Navigator.pop(context); // O navega a login
+        Navigator.pop(context);
       }
     }
   }
@@ -43,68 +40,75 @@ class _RegisterPageState extends State<RegisterPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text("Registro")),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            children: [
-              _buildTextField(_nameController, "Nombre", TextInputType.text),
-              _buildTextField(_lastNameController, "Apellido", TextInputType.text),
-              _buildTextField(_emailController, "Correo electrónico", TextInputType.emailAddress),
-              _buildTextField(_passwordController, "Contraseña", TextInputType.visiblePassword, isPassword: true),
-              _buildTextField(_confirmPasswordController, "Confirmar contraseña", TextInputType.visiblePassword, isPassword: true),
-
-              CheckboxListTile(
-                title: Text("Acepto los términos y condiciones"),
-                value: _agreeToTerms,
-                onChanged: (value) {
-                  setState(() {
-                    _agreeToTerms = value ?? false;
-                  });
-                },
+      backgroundColor: Colors.white,
+      body: Center(
+        child: SingleChildScrollView(
+          child: Container(
+            margin: const EdgeInsets.all(16),
+            padding: const EdgeInsets.all(20),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF9F6E9),
+              border: Border.all(color: Colors.brown, width: 2),
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                children: [
+                  Image.asset('assets/logo_eventwine.jpg', height: 100),
+                  const SizedBox(height: 20),
+                  _buildTextField(_usernameController, "Usuario"),
+                  const SizedBox(height: 16),
+                  _buildTextField(_passwordController, "Contraseña", isPassword: true),
+                  const SizedBox(height: 16),
+                  _buildTextField(_roleController, "Rol"),
+                  const SizedBox(height: 24),
+                  _isLoading
+                      ? const CircularProgressIndicator()
+                      : ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: const Color(0xFFD8B47C),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                              side: const BorderSide(color: Colors.brown),
+                            ),
+                          ),
+                          onPressed: _register,
+                          child: const Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 32, vertical: 12),
+                            child: Text(
+                              "Registrarse",
+                              style: TextStyle(color: Colors.brown, fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                ],
               ),
-
-              SizedBox(height: 20),
-
-              _isLoading
-                  ? CircularProgressIndicator()
-                  : ElevatedButton(
-                      onPressed: _register,
-                      child: Text("Registrarse"),
-                    ),
-            ],
+            ),
           ),
         ),
       ),
     );
   }
 
-  Widget _buildTextField(TextEditingController controller, String label, TextInputType type, {bool isPassword = false}) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8.0),
-      child: TextFormField(
-        controller: controller,
-        keyboardType: type,
-        obscureText: isPassword,
-        decoration: InputDecoration(
-          labelText: label,
-          border: OutlineInputBorder(),
+  Widget _buildTextField(TextEditingController controller, String label, {bool isPassword = false}) {
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        labelText: label,
+        filled: true,
+        fillColor: Colors.white,
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.brown),
         ),
-        validator: (value) {
-          if (value == null || value.trim().isEmpty) {
-            return 'Este campo es obligatorio';
-          }
-          if (label == "Correo electrónico" && !value.contains('@')) {
-            return 'Ingrese un correo válido';
-          }
-          if (label == "Confirmar contraseña" && value != _passwordController.text) {
-            return 'Las contraseñas no coinciden';
-          }
-          return null;
-        },
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.brown, width: 2),
+        ),
       ),
+      validator: (value) => (value == null || value.isEmpty) ? 'Campo obligatorio' : null,
     );
   }
 }
