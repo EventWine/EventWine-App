@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:eventwine/feature/lote/presentation/pages/lote_page.dart';
 
 class HomePage extends StatelessWidget {
   final String nombreUsuario = "Carlos Mendoza";
@@ -20,7 +21,7 @@ class HomePage extends StatelessWidget {
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView( // Para que se desplace si el contenido crece
+        child: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -121,6 +122,24 @@ class HomePage extends StatelessWidget {
               ),
 
               const SizedBox(height: 24),
+
+              // Botón "Empezar a vinificar"
+              ElevatedButton(
+                onPressed: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => LotePage()),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.amber,
+                  padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 24),
+                  textStyle: TextStyle(fontSize: 16),
+                ),
+                child: const Text('Empezar a vinificar'),
+              ),
+
+              const SizedBox(height: 16),
 
               // Frase motivadora
               Padding(

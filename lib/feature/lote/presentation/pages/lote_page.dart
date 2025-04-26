@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eventwine/feature/lote/data/remote/lote_service.dart';
 import 'package:eventwine/feature/lote/data/remote/lote_model.dart';
+import 'package:eventwine/feature/home/presentation/pages/home_page.dart';	
+import 'package:eventwine/feature/fermentacion/presentation/pages/fermentacion_page.dart';
 
 class LotePage extends StatefulWidget {
   @override
@@ -37,6 +39,15 @@ class _LotePageState extends State<LotePage> {
         backgroundColor: const Color(0xFF743636),
         elevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
         title: SizedBox(
           height: 80,
           child: Image.asset(
@@ -81,7 +92,7 @@ class _LotePageState extends State<LotePage> {
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios),
                     onPressed: () {
-                      // Acción para página anterior
+                      
                     },
                   ),
                   const SizedBox(width: 8),
@@ -96,7 +107,10 @@ class _LotePageState extends State<LotePage> {
                   IconButton(
                     icon: const Icon(Icons.arrow_forward_ios),
                     onPressed: () {
-                      // Acción para página siguiente
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => FermentacionPage()),
+                      );
                     },
                   ),
                 ],

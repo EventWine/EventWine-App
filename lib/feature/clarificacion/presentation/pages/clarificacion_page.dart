@@ -1,6 +1,9 @@
+import 'package:eventwine/feature/fermentacion/presentation/pages/fermentacion_page.dart';
+import 'package:eventwine/feature/prensado/presentation/pages/prensado_page.dart';
 import 'package:flutter/material.dart';
 import 'package:eventwine/feature/clarificacion/data/remote/clarificacion_service.dart';
 import 'package:eventwine/feature/clarificacion/data/remote/clarificacion_model.dart';
+import 'package:eventwine/feature/home/presentation/pages/home_page.dart';
 
 class ClarificacionPage extends StatefulWidget {
   @override
@@ -37,6 +40,15 @@ class _ClarificacionPageState extends State<ClarificacionPage> {
         backgroundColor: const Color(0xFF743636),
         elevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
         title: SizedBox(
           height: 80,
           child: Image.asset(
@@ -81,7 +93,10 @@ class _ClarificacionPageState extends State<ClarificacionPage> {
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios),
                     onPressed: () {
-                      // Acción para página anterior
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => FermentacionPage()),
+                      );
                     },
                   ),
                   const SizedBox(width: 8),
@@ -96,7 +111,10 @@ class _ClarificacionPageState extends State<ClarificacionPage> {
                   IconButton(
                     icon: const Icon(Icons.arrow_forward_ios),
                     onPressed: () {
-                      // Acción para página siguiente
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => PrensadoPage()),
+                      );
                     },
                   ),
                 ],

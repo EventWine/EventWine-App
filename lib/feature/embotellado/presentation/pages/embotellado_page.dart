@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:eventwine/feature/embotellado/data/remote/embotellado_service.dart';
 import 'package:eventwine/feature/embotellado/data/remote/embotellado_model.dart';
+import 'package:eventwine/feature/home/presentation/pages/home_page.dart';
+import 'package:eventwine/feature/anejo/presentation/pages/anejo_page.dart';
 
 class EmbotelladoPage extends StatefulWidget {
   @override
@@ -37,6 +39,15 @@ class _EmbotelladoPageState extends State<EmbotelladoPage> {
         backgroundColor: const Color(0xFF743636),
         elevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
         title: SizedBox(
           height: 80,
           child: Image.asset(
@@ -81,7 +92,10 @@ class _EmbotelladoPageState extends State<EmbotelladoPage> {
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios),
                     onPressed: () {
-                      // Acción para página anterior
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => AnejoPage()),
+                      );
                     },
                   ),
                   const SizedBox(width: 8),

@@ -1,7 +1,9 @@
+import 'package:eventwine/feature/clarificacion/presentation/pages/clarificacion_page.dart';
+import 'package:eventwine/feature/lote/presentation/pages/lote_page.dart';
 import 'package:flutter/material.dart';
 import 'package:eventwine/feature/fermentacion/data/remote/fermentacion_service.dart';
 import 'package:eventwine/feature/fermentacion/data/remote/fermentacion_model.dart';
-
+import 'package:eventwine/feature/home/presentation/pages/home_page.dart';
 class FermentacionPage extends StatefulWidget {
   @override
   _FermentacionPageState createState() => _FermentacionPageState();
@@ -37,6 +39,15 @@ class _FermentacionPageState extends State<FermentacionPage> {
         backgroundColor: const Color(0xFF743636),
         elevation: 0,
         centerTitle: true,
+        leading: IconButton(
+          icon: const Icon(Icons.home),
+          onPressed: () {
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()),
+            );
+          },
+        ),
         title: SizedBox(
           height: 80,
           child: Image.asset(
@@ -81,7 +92,10 @@ class _FermentacionPageState extends State<FermentacionPage> {
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios),
                     onPressed: () {
-                      // Acción para página anterior
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => LotePage()),
+                      );
                     },
                   ),
                   const SizedBox(width: 8),
@@ -96,7 +110,10 @@ class _FermentacionPageState extends State<FermentacionPage> {
                   IconButton(
                     icon: const Icon(Icons.arrow_forward_ios),
                     onPressed: () {
-                      // Acción para página siguiente
+                      Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => ClarificacionPage()),
+                      );
                     },
                   ),
                 ],
