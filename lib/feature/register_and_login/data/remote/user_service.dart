@@ -1,84 +1,38 @@
-import "dart:convert";
-import "package:flutter/material.dart";
-import 'package:shared_preferences/shared_preferences.dart';
-import "package:http/http.dart" as http;
-import 'package:eventwine/core/app_constants.dart';
+import 'package:eventwine/feature/register_and_login/data/remote/user_model.dart';
+class UserService {
+  // Simulando una lista de usuarios registrados
+  static List<UserModel> _users = [];
 
-final Uri signUpUrl = Uri.parse('${AppConstants.baseURL}/api/auth/register');
-final Uri signInUrl = Uri.parse('${AppConstants.baseURL}/api/auth/login');
+  // Función de registro
+  static Future<String> registerUser(String username, String password, {String role = ''}) async {
+    // Simulamos un pequeño retraso de red
+    await Future.delayed(const Duration(seconds: 2));
 
-Future<String> registerUser(String username, String password, {required String role}) async {
-  final requestData = {
-    'name': username,
-    'lastName': '',
-    'role': role,
-    'password': password,
-  };
-
-  final headers = {"Content-Type": "application/json"};
-
-  print('Datos de registro: ${json.encode(requestData)}');
-  print('Encabezados: $headers');
-  print('URL de registro: $signUpUrl');
-
-  try {
-    final response = await http.post(
-      signUpUrl,
-      headers: headers,
-      body: json.encode(requestData),
-    );
-
-    if (response.statusCode == 201) {
-      return "Usuario registrado exitosamente.";
-    } else {
-      if (response.body.isNotEmpty) {
-        final errorResponse = json.decode(response.body);
-        final errorMessage = errorResponse['message'] ?? 'Error desconocido';
-        print('Error al registrar usuario: $errorMessage');
-        return "Error al registrar usuario: $errorMessage";
-      } else {
-        print('Error al registrar usuario: Código de estado ${response.statusCode}');
-        return "Error al registrar usuario: Código de estado ${response.statusCode}";
+    // Verificar si el nombre de usuario ya está registrado
+    for (var user in _users) {
+      if (user.username == username) {
+        return 'El usuario ya está registrado';
       }
     }
-  } catch (e) {
-    print('Error de conexión: $e');
-    return "Error de conexión: $e";
+
+    // Registrar al nuevo usuario
+    _users.add(UserModel(username: username, password: password, role: role));
+
+    return 'Registro exitoso';
   }
-}
 
-Future<String> loginUser(String username, String password, BuildContext context) async {
-  try {
-    final response = await http.post(
-      signInUrl,
-      headers: {"Content-Type": "application/json"},
-      body: json.encode({
-        'username': username,
-        'password': password,
-      }),
-    );
+  // Función de login
+  static Future<String> loginUser(String username, String password) async {
+    // Simulamos un pequeño retraso de red
+    await Future.delayed(const Duration(seconds: 2));
 
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      final token = data['token'];
-      final userId = data['id'];
-
-      final prefs = await SharedPreferences.getInstance();
-      await prefs.setString('jwt_token', token);
-      await prefs.setInt('userId', userId);
-      await prefs.setString('user_id', userId.toString());
-
-      Navigator.pushReplacementNamed(context, '/home');
-
-      print('Token: $token');
-      print('UserId: $userId');
-      return "Inicio de sesión exitoso.";
-    } else {
-      print('Error al iniciar sesión: ${response.body}');
-      return "Error al iniciar sesión: ${response.body}";
+    // Buscar al usuario
+    for (var user in _users) {
+      if (user.username == username && user.password == password) {
+        return 'Login exitoso';
+      }
     }
-  } catch (e) {
-    print('Error de conexión: $e');
-    return "Error de conexión: $e";
+
+    return 'Usuario o contraseña incorrectos';
   }
 }

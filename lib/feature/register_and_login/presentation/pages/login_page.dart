@@ -22,10 +22,9 @@ class _LoginPageState extends State<LoginPage> {
         _errorMessage = '';
       });
 
-      final result = await loginUser(
+      final result = await UserService.loginUser(
         _usernameController.text.trim(),
         _passwordController.text,
-        context,
       );
 
       setState(() {
@@ -60,7 +59,7 @@ class _LoginPageState extends State<LoginPage> {
               key: _formKey,
               child: Column(
                 children: [
-                  Image.asset('assets/logo_eventwine.jpg', height: 100), // Ajusta la ruta
+                  Image.asset('assets/logo_eventwine.jpg', height: 100),
                   const SizedBox(height: 20),
                   _buildTextField(_usernameController, "Usuario"),
                   const SizedBox(height: 16),

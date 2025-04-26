@@ -19,7 +19,7 @@ class _RegisterPageState extends State<RegisterPage> {
     if (_formKey.currentState!.validate()) {
       setState(() => _isLoading = true);
 
-      final responseMessage = await registerUser(
+      final responseMessage = await UserService.registerUser(
         _usernameController.text.trim(),
         _passwordController.text.trim(),
         role: _roleController.text.trim(),
@@ -82,6 +82,14 @@ class _RegisterPageState extends State<RegisterPage> {
                             ),
                           ),
                         ),
+                  const SizedBox(height: 16),
+                  GestureDetector(
+                    onTap: () => Navigator.pushNamed(context, '/login'),
+                    child: const Text(
+                      "¿Ya tienes una cuenta? Inicia sesión",
+                      style: TextStyle(color: Colors.lightBlue),
+                    ),
+                  ),
                 ],
               ),
             ),
