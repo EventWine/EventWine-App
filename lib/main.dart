@@ -7,6 +7,7 @@ import 'package:eventwine/feature/lote/presentation/pages/lote_page.dart';
 import 'package:eventwine/feature/fermentacion/presentation/pages/fermentacion_page.dart';
 import 'package:eventwine/feature/clarificacion/presentation/pages/clarificacion_page.dart';
 import 'package:eventwine/feature/prensado/presentation/pages/prensado_page.dart';
+import 'package:eventwine/feature/anejo/presentation/pages/anejo_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -33,6 +34,7 @@ class MyApp extends StatelessWidget {
         '/fermentacion': (context) => FermentacionPage(),
         '/clarificacion': (context) => ClarificacionPage(),
         '/prensado': (context) => PrensadoPage(),
+        '/anejo': (context) => AnejoPage(),
       },
     );
   }
