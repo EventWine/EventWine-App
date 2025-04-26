@@ -4,6 +4,7 @@ import 'package:eventwine/feature/register_and_login/presentation/pages/login_pa
 import 'package:eventwine/feature/home/presentation/pages/home_page.dart';
 import 'package:eventwine/feature/home/presentation/pages/homewine_page.dart';
 import 'package:eventwine/feature/lote/presentation/pages/lote_page.dart';
+import 'package:eventwine/feature/fermentacion/presentation/pages/fermentacion_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -20,13 +21,14 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/lote',
+      initialRoute: '/fermentacion',
       routes: {
         '/login': (context) => const LoginPage(),
         '/register': (context) => RegisterPage(),
         '/home': (context) => HomePage(),	
         '/home-wine': (context) => const HomeWinePage(),
         '/lote': (context) => LotePage(),
+        '/fermentacion': (context) => FermentacionPage(),
       },
     );
   }
