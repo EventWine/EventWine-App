@@ -5,6 +5,7 @@ import 'package:eventwine/feature/home/presentation/pages/home_page.dart';
 import 'package:eventwine/feature/home/presentation/pages/homewine_page.dart';
 import 'package:eventwine/feature/lote/presentation/pages/lote_page.dart';
 import 'package:eventwine/feature/fermentacion/presentation/pages/fermentacion_page.dart';
+import 'package:eventwine/feature/clarificacion/presentation/pages/clarificacion_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,6 +30,7 @@ class MyApp extends StatelessWidget {
         '/home-wine': (context) => const HomeWinePage(),
         '/lote': (context) => LotePage(),
         '/fermentacion': (context) => FermentacionPage(),
+        '/clarificacion': (context) => ClarificacionPage(),
       },
     );
   }
