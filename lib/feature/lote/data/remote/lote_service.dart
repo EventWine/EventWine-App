@@ -1,0 +1,88 @@
+import 'lote_model.dart';
+
+class LoteService {
+  List<Lote> obtenerLotes() {
+    return [
+      Lote(
+        id: 1,
+        codigoVinedo: 'VIN123',
+        variedadUva: 'Cabernet Sauvignon',
+        fechaVendimia: '2024-08-25',
+        cantidadUva: 1500,
+        origenVinedo: 'Valle de Napa',
+        fechaInicio: '2024-09-01',
+        status: 'En fermentación',
+      ),
+      Lote(
+        id: 2,
+        codigoVinedo: 'VIN456',
+        variedadUva: 'Merlot',
+        fechaVendimia: '2024-08-28',
+        cantidadUva: 1200,
+        origenVinedo: 'Sonoma',
+        fechaInicio: '2024-09-03',
+        status: 'Listo para embotellar',
+      ),
+      Lote(
+        id: 3,
+        codigoVinedo: 'VIN456',
+        variedadUva: 'Merlot',
+        fechaVendimia: '2024-08-28',
+        cantidadUva: 1200,
+        origenVinedo: 'Sonoma',
+        fechaInicio: '2024-09-03',
+        status: 'Listo para embotellar',
+      ),
+      Lote(
+        id: 4,
+        codigoVinedo: 'VIN456',
+        variedadUva: 'Merlot',
+        fechaVendimia: '2024-08-28',
+        cantidadUva: 1200,
+        origenVinedo: 'Sonoma',
+        fechaInicio: '2024-09-03',
+        status: 'Listo para embotellar',
+      ),
+      Lote(
+        id: 5,
+        codigoVinedo: 'VIN456',
+        variedadUva: 'Merlot',
+        fechaVendimia: '2024-08-28',
+        cantidadUva: 1200,
+        origenVinedo: 'Sonoma',
+        fechaInicio: '2024-09-03',
+        status: 'Listo para embotellar',
+      ),
+      Lote(
+        id: 6,
+        codigoVinedo: 'VIN456',
+        variedadUva: 'Merlot',
+        fechaVendimia: '2024-08-28',
+        cantidadUva: 1200,
+        origenVinedo: 'Sonoma',
+        fechaInicio: '2024-09-03',
+        status: 'Listo para embotellar',
+      ),
+      Lote(
+        id: 7,
+        codigoVinedo: 'VIN456',
+        variedadUva: 'Merlot',
+        fechaVendimia: '2024-08-28',
+        cantidadUva: 1200,
+        origenVinedo: 'Sonoma',
+        fechaInicio: '2024-09-03',
+        status: 'Listo para embotellar',
+      ),
+      Lote(
+        id: 8,
+        codigoVinedo: 'VIN456',
+        variedadUva: 'Merlot',
+        fechaVendimia: '2024-08-28',
+        cantidadUva: 1200,
+        origenVinedo: 'Sonoma',
+        fechaInicio: '2024-09-03',
+        status: 'Listo para embotellar',
+      ),
+    ];
+  }
+}
