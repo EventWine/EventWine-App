@@ -30,12 +30,17 @@ class _LoginPageState extends State<LoginPage> {
         context,
       );
 
-      setState(() {
-        _isLoading = false;
-        if (!result.toLowerCase().contains("exitoso")) {
-          _errorMessage = result;
-        }
+       setState(() {
+      _isLoading = false;
       });
+
+      if (result.toLowerCase().contains("exitoso")) {
+        Navigator.pushReplacementNamed(context, '/home');
+      } else {
+        setState(() {
+          _errorMessage = result;
+        });
+      }
     }
   }
 
