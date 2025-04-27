@@ -12,7 +12,7 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _roleController = TextEditingController();
+  String _selectedRole = 'Winemaker'; // Valor por defecto
   bool _isLoading = false;
 
   void _register() async {
@@ -22,7 +22,7 @@ class _RegisterPageState extends State<RegisterPage> {
       final responseMessage = await UserService.registerUser(
         _usernameController.text.trim(),
         _passwordController.text.trim(),
-        role: _roleController.text.trim(),
+        role: _selectedRole,
       );
 
       setState(() => _isLoading = false);
@@ -31,7 +31,7 @@ class _RegisterPageState extends State<RegisterPage> {
         SnackBar(content: Text(responseMessage)),
       );
 
-      if (responseMessage.contains('exitosamente')) {
+      if (responseMessage.toLowerCase().contains('exitoso')) {
         Navigator.pop(context);
       }
     }
@@ -61,7 +61,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 16),
                   _buildTextField(_passwordController, "Contraseña", isPassword: true),
                   const SizedBox(height: 16),
-                  _buildTextField(_roleController, "Rol"),
+                  _buildRoleSelector(),
                   const SizedBox(height: 24),
                   _isLoading
                       ? const CircularProgressIndicator()
@@ -117,6 +117,46 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
       validator: (value) => (value == null || value.isEmpty) ? 'Campo obligatorio' : null,
+    );
+  }
+
+  Widget _buildRoleSelector() {
+    return InkWell(
+      onTap: () {
+        showModalBottomSheet(
+          context: context,
+          builder: (BuildContext context) {
+            return ListView(
+              children: [
+                ListTile(
+                  title: const Text('Winemaker'),
+                  onTap: () {
+                    setState(() {
+                      _selectedRole = 'Winemaker';
+                    });
+                    Navigator.pop(context);
+                  },
+                ),
+              ],
+            );
+          },
+        );
+      },
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          border: Border.all(color: Colors.brown),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(_selectedRole, style: const TextStyle(color: Colors.black87)),
+            const Icon(Icons.arrow_drop_down),
+          ],
+        ),
+      ),
     );
   }
 }

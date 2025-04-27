@@ -25,10 +25,10 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      initialRoute: '/prensado',
+      initialRoute: '/home-wine',
       routes: {
         '/login': (context) => const LoginPage(),
-        '/register': (context) => RegisterPage(),
+        '/register': (context) => const RegisterPage(),
         '/home': (context) => HomePage(),	
         '/home-wine': (context) => const HomeWinePage(),
         '/lote': (context) => LotePage(),
