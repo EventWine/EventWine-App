@@ -4,6 +4,7 @@ import 'package:eventwine/feature/lote/data/remote/lote_model.dart';
 import 'package:eventwine/feature/home/presentation/pages/home_page.dart';
 import 'package:eventwine/feature/fermentacion/presentation/pages/fermentacion_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:intl/intl.dart';
 
 class LotePage extends StatefulWidget {
   @override
@@ -16,6 +17,17 @@ class _LotePageState extends State<LotePage> {
   List<Lote> lotesFiltrados = [];
   TextEditingController searchController = TextEditingController();
   bool _isLoading = true;
+
+  final _formKey = GlobalKey<FormState>();
+  final codigoVinedoController = TextEditingController();
+  String? _variedadUvaSeleccionada;
+  final fechaVendimiaController = TextEditingController();
+  final cantidadUvaController = TextEditingController();
+  String? _origenVinedoSeleccionado;
+  final fechaInicioController = TextEditingController();
+
+  final List<String> _variedadesUva = ['Quebranta', 'Negra Criolla', 'Italia', 'Torontel', 'Mollar', 'Albilla'];
+  final List<String> _origenesVinedo = ['Pisco', 'Ica', 'Chincha', 'Nazca', 'Palpa'];
 
   @override
   void initState() {
@@ -44,14 +56,28 @@ class _LotePageState extends State<LotePage> {
     });
   }
 
+  Future<void> _seleccionarFecha(BuildContext context, TextEditingController controller) async {
+    final DateTime? picked = await showDatePicker(
+      context: context,
+      initialDate: DateTime.now(),
+      firstDate: DateTime(2000),
+      lastDate: DateTime(2050),
+    );
+    if (picked != null) {
+      setState(() {
+        controller.text = DateFormat('yyyy-MM-dd').format(picked);
+      });
+    }
+  }
+
   Future<void> _mostrarFormularioNuevoLote() async {
-    final _formKey = GlobalKey<FormState>();
-    final codigoVinedoController = TextEditingController();
-    final variedadUvaController = TextEditingController();
-    final fechaVendimiaController = TextEditingController();
-    final cantidadUvaController = TextEditingController();
-    final origenVinedoController = TextEditingController();
-    final fechaInicioController = TextEditingController();
+    _formKey.currentState?.reset();
+    codigoVinedoController.clear();
+    _variedadUvaSeleccionada = null;
+    fechaVendimiaController.clear();
+    cantidadUvaController.clear();
+    _origenVinedoSeleccionado = null;
+    fechaInicioController.clear();
 
     await showDialog(
       context: context,
@@ -69,14 +95,30 @@ class _LotePageState extends State<LotePage> {
                     decoration: const InputDecoration(labelText: 'Código de Viñedo'),
                     validator: (value) => value == null || value.isEmpty ? 'Campo obligatorio' : null,
                   ),
-                  TextFormField(
-                    controller: variedadUvaController,
+                  DropdownButtonFormField<String>(
                     decoration: const InputDecoration(labelText: 'Variedad de Uva'),
-                    validator: (value) => value == null || value.isEmpty ? 'Campo obligatorio' : null,
+                    value: _variedadUvaSeleccionada,
+                    items: _variedadesUva.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _variedadUvaSeleccionada = newValue;
+                      });
+                    },
+                    validator: (value) => value == null ? 'Campo obligatorio' : null,
                   ),
                   TextFormField(
                     controller: fechaVendimiaController,
-                    decoration: const InputDecoration(labelText: 'Fecha de Vendimia (YYYY-MM-DD)'),
+                    decoration: const InputDecoration(
+                      labelText: 'Fecha de Vendimia (YYYY-MM-DD)',
+                      suffixIcon: Icon(Icons.calendar_today),
+                    ),
+                    readOnly: true,
+                    onTap: () => _seleccionarFecha(context, fechaVendimiaController),
                     validator: (value) {
                       if (value == null || value.isEmpty) return 'Campo obligatorio';
                       if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value)) return 'Formato incorrecto (YYYY-MM-DD)';
@@ -87,19 +129,47 @@ class _LotePageState extends State<LotePage> {
                     controller: cantidadUvaController,
                     keyboardType: TextInputType.number,
                     decoration: const InputDecoration(labelText: 'Cantidad de Uva (kg)'),
-                    validator: (value) => value == null || value.isEmpty ? 'Campo obligatorio' : null,
+                    validator: (value) {
+                      if (value == null || value.isEmpty) return 'Campo obligatorio';
+                      final intCantidad = int.tryParse(value);
+                      if (intCantidad == null || intCantidad <= 0) return 'Debe ser un entero positivo';
+                      return null;
+                    },
                   ),
-                  TextFormField(
-                    controller: origenVinedoController,
+                  DropdownButtonFormField<String>(
                     decoration: const InputDecoration(labelText: 'Origen del Viñedo'),
-                    validator: (value) => value == null || value.isEmpty ? 'Campo obligatorio' : null,
+                    value: _origenVinedoSeleccionado,
+                    items: _origenesVinedo.map((String value) {
+                      return DropdownMenuItem<String>(
+                        value: value,
+                        child: Text(value),
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      setState(() {
+                        _origenVinedoSeleccionado = newValue;
+                      });
+                    },
+                    validator: (value) => value == null ? 'Campo obligatorio' : null,
                   ),
                   TextFormField(
                     controller: fechaInicioController,
-                    decoration: const InputDecoration(labelText: 'Fecha de Inicio (YYYY-MM-DD)'),
+                    decoration: const InputDecoration(
+                      labelText: 'Fecha de Inicio (YYYY-MM-DD)',
+                      suffixIcon: Icon(Icons.calendar_today),
+                    ),
+                    readOnly: true,
+                    onTap: () => _seleccionarFecha(context, fechaInicioController),
                     validator: (value) {
                       if (value == null || value.isEmpty) return 'Campo obligatorio';
                       if (!RegExp(r'^\d{4}-\d{2}-\d{2}$').hasMatch(value)) return 'Formato incorrecto (YYYY-MM-DD)';
+                      if (fechaVendimiaController.text.isNotEmpty && value.isNotEmpty) {
+                        final fechaVendimia = DateTime.parse(fechaVendimiaController.text);
+                        final fechaInicio = DateTime.parse(value);
+                        if (!fechaInicio.isAfter(fechaVendimia)) {
+                          return 'Debe ser posterior a la fecha de vendimia';
+                        }
+                      }
                       return null;
                     },
                   ),
@@ -122,22 +192,21 @@ class _LotePageState extends State<LotePage> {
                   final profileId = prefs.getString('profileId');
                   if (profileId != null) {
                     final nuevoLote = Lote(
-                      id: 0, // La API genera el ID
+                      id: 0,
                       profileId: profileId,
                       codigoVinedo: codigoVinedoController.text,
-                      variedadUva: variedadUvaController.text,
+                      variedadUva: _variedadUvaSeleccionada!,
                       fechaVendimia: fechaVendimiaController.text,
-                      cantidadUva: int.tryParse(cantidadUvaController.text) ?? 0,
-                      origenVinedo: origenVinedoController.text,
+                      cantidadUva: int.parse(cantidadUvaController.text),
+                      origenVinedo: _origenVinedoSeleccionado!,
                       fechaInicio: fechaInicioController.text,
-                      status: 'Collected', // Establecemos el status por defecto
+                      status: 'Collected',
                     );
 
                     final loteCreado = await loteService.crearLote(nuevoLote);
                     if (loteCreado != null) {
-                      // Recargar la lista de lotes después de crear uno nuevo
                       _cargarLotes();
-                      Navigator.of(context).pop(); // Cerrar el diálogo
+                      Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Lote creado exitosamente')),
                       );
@@ -188,7 +257,6 @@ class _LotePageState extends State<LotePage> {
         padding: const EdgeInsets.all(16.0),
         child: Column(
           children: [
-            // Título principal
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -206,8 +274,6 @@ class _LotePageState extends State<LotePage> {
                 const SizedBox(height: 16),
               ],
             ),
-
-            // Sección "Lotes" con flechas
             Container(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
               decoration: BoxDecoration(
@@ -219,9 +285,7 @@ class _LotePageState extends State<LotePage> {
                 children: [
                   IconButton(
                     icon: const Icon(Icons.arrow_back_ios),
-                    onPressed: () {
-                      // Acción para ir a la página anterior (si es necesario)
-                    },
+                    onPressed: () {},
                   ),
                   const SizedBox(width: 8),
                   const Text(
@@ -244,10 +308,7 @@ class _LotePageState extends State<LotePage> {
                 ],
               ),
             ),
-
             const SizedBox(height: 16),
-
-            // Barra de búsqueda
             TextField(
               controller: searchController,
               decoration: InputDecoration(
@@ -259,10 +320,7 @@ class _LotePageState extends State<LotePage> {
               ),
               onChanged: filtrarLotes,
             ),
-
             const SizedBox(height: 16),
-
-            // Lista de lotes
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
@@ -274,8 +332,14 @@ class _LotePageState extends State<LotePage> {
                           margin: const EdgeInsets.symmetric(vertical: 8),
                           child: ListTile(
                             leading: const Icon(Icons.wine_bar, color: Colors.deepPurple),
-                            title: Text(lote.origenVinedo),
-                            subtitle: Text('Inicio: ${lote.fechaInicio}'),
+                            title: Text('Origen: ${lote.origenVinedo}'),
+                            subtitle: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text('Inicio: ${lote.fechaInicio}'),
+                                Text('ID: ${lote.id}'),
+                              ],
+                            ),
                             trailing: ElevatedButton(
                               style: ElevatedButton.styleFrom(
                                 backgroundColor: Colors.green.shade700,
@@ -285,7 +349,7 @@ class _LotePageState extends State<LotePage> {
                               ),
                               child: const Text(
                                 'Detalles >>',
-                                style: TextStyle(color: Colors.white), // Texto blanco
+                                style: TextStyle(color: Colors.white),
                               ),
                               onPressed: () {
                                 showDialog(
