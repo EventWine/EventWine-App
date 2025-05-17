@@ -26,11 +26,13 @@ class _HomePageState extends State<HomePage> {
 
     if (userId != null) {
       final profileData = await UserService.getProfileByUserId(userId);
-      print('HomePage - profileData respuesta: $profileData'); 
-      if (profileData != null && profileData.containsKey('fullName')) {
+      print('HomePage - profileData respuesta: $profileData');
+      if (profileData != null && profileData.containsKey('fullName') && profileData.containsKey('id')) {
         setState(() {
           _fullName = profileData['fullName'];
         });
+        await prefs.setString('profileId', profileData['id'].toString());
+        print('HomePage - profileId guardado: ${profileData['id']}');
       } else {
         setState(() {
           _fullName = 'Error al cargar el nombre';
