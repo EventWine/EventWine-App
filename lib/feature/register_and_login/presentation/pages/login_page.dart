@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:eventwine/feature/register_and_login/data/remote/user_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:eventwine/feature/home/presentation/pages/home_page.dart'; // Importa HomePage
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -22,7 +24,7 @@ class _LoginPageState extends State<LoginPage> {
         _errorMessage = '';
       });
 
-      final result = await UserService.loginUser(
+      final responseLogin = await UserService.loginUser(
         _usernameController.text.trim(),
         _passwordController.text,
       );
@@ -31,11 +33,33 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = false;
       });
 
-      if (result.toLowerCase().contains("exitoso")) {
-        Navigator.pushReplacementNamed(context, '/home');
+      if (responseLogin['message'].toLowerCase().contains("exitoso")) {
+        final userId = responseLogin['userId'];
+        if (userId != null) {
+          final profileData = await UserService.getProfileByUserId(userId);
+          if (profileData != null && profileData.containsKey('fullName')) {
+            final fullName = profileData['fullName'];
+            final prefs = await SharedPreferences.getInstance();
+            await prefs.setInt('userId', userId); // Guardar el userId
+            print('LoginPage - userId guardado: $userId'); // Línea de depuración
+            Navigator.pushReplacement(
+              context,
+              MaterialPageRoute(builder: (context) => HomePage()), // Navega a HomePage sin pasar fullName
+            );
+          } else {
+            // Manejar el caso en que no se obtiene el perfil
+            setState(() {
+              _errorMessage = 'Error al cargar la información del perfil.';
+            });
+          }
+        } else {
+          setState(() {
+            _errorMessage = 'Error al obtener el ID del usuario.';
+          });
+        }
       } else {
         setState(() {
-          _errorMessage = result;
+          _errorMessage = responseLogin['message'];
         });
       }
     }

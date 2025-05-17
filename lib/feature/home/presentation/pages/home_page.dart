@@ -1,8 +1,47 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:eventwine/feature/register_and_login/data/remote/user_service.dart';
 import 'package:eventwine/feature/lote/presentation/pages/lote_page.dart';
 
-class HomePage extends StatelessWidget {
-  final String nombreUsuario = "Carlos Mendoza";
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
+
+  @override
+  State<HomePage> createState() => _HomePageState();
+}
+
+class _HomePageState extends State<HomePage> {
+  String _fullName = 'Cargando...';
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserProfile();
+  }
+
+  Future<void> _loadUserProfile() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('userId');
+    print('HomePage - userId leído: $userId');
+
+    if (userId != null) {
+      final profileData = await UserService.getProfileByUserId(userId);
+      print('HomePage - profileData respuesta: $profileData'); 
+      if (profileData != null && profileData.containsKey('fullName')) {
+        setState(() {
+          _fullName = profileData['fullName'];
+        });
+      } else {
+        setState(() {
+          _fullName = 'Error al cargar el nombre';
+        });
+      }
+    } else {
+      setState(() {
+        _fullName = 'Usuario no identificado';
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -27,17 +66,10 @@ class HomePage extends StatelessWidget {
             children: [
               // Encabezado
               Text(
-                '👋 Bienvenido, $nombreUsuario',
+                '👋 Bienvenido, $_fullName',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
               const SizedBox(height: 24),
-
-              // Dashboard
-              Text(
-                'Resumen general',
-                style: Theme.of(context).textTheme.titleMedium,
-              ),
-              const SizedBox(height: 12),
 
               // Tarjetas
               Row(
