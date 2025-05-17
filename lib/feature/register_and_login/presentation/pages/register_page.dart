@@ -22,7 +22,6 @@ class _RegisterPageState extends State<RegisterPage> {
       final responseMessage = await UserService.registerUser(
         _usernameController.text.trim(),
         _passwordController.text.trim(),
-        role: _selectedRole,
       );
 
       setState(() => _isLoading = false);

@@ -11,8 +11,7 @@ class UserService {
       headers: {'Content-Type': 'application/json'},
       body: jsonEncode({
         "username": username,
-        "password": password,
-        "role": role,
+        "password": password
       }),
     );
 
