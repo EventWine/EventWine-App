@@ -12,8 +12,9 @@ class _RegisterPageState extends State<RegisterPage> {
   final _formKey = GlobalKey<FormState>();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  String _selectedRole = 'Winemaker'; // Valor por defecto
+  String _selectedRole = 'Winemaker';
   bool _isLoading = false;
+  bool _obscurePassword = true;
 
   void _register() async {
     if (_formKey.currentState!.validate()) {
@@ -34,6 +35,13 @@ class _RegisterPageState extends State<RegisterPage> {
         Navigator.pop(context);
       }
     }
+  }
+
+  bool _isPasswordSecure(String password) {
+    final passwordRegex = RegExp(
+      r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#\$&*~.,;:\-_])[A-Za-z\d!@#\$&*~.,;:\-_]{8,}$',
+    );
+    return passwordRegex.hasMatch(password);
   }
 
   @override
@@ -58,7 +66,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   const SizedBox(height: 20),
                   _buildTextField(_usernameController, "Usuario"),
                   const SizedBox(height: 16),
-                  _buildTextField(_passwordController, "Contraseña", isPassword: true),
+                  _buildPasswordField(),
                   const SizedBox(height: 16),
                   _buildRoleSelector(),
                   const SizedBox(height: 24),
@@ -116,6 +124,42 @@ class _RegisterPageState extends State<RegisterPage> {
         ),
       ),
       validator: (value) => (value == null || value.isEmpty) ? 'Campo obligatorio' : null,
+    );
+  }
+
+  Widget _buildPasswordField() {
+    return TextFormField(
+      controller: _passwordController,
+      obscureText: _obscurePassword,
+      decoration: InputDecoration(
+        labelText: "Contraseña",
+        filled: true,
+        fillColor: Colors.white,
+        suffixIcon: IconButton(
+          icon: Icon(_obscurePassword ? Icons.visibility_off : Icons.visibility),
+          onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
+        ),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.brown),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: const BorderSide(color: Colors.brown, width: 2),
+        ),
+      ),
+      validator: (value) {
+        if (value == null || value.isEmpty) return 'Campo obligatorio';
+        if (!_isPasswordSecure(value)) {
+          return 'La contraseña debe tener al menos:\n'
+              '- 8 caracteres\n'
+              '- Una mayúscula\n'
+              '- Una minúscula\n'
+              '- Un número\n'
+              '- Un carácter especial (!@#...)';
+        }
+        return null;
+      },
     );
   }
 
