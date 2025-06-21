@@ -1,38 +1,60 @@
+import 'dart:convert';
 import 'package:eventwine/feature/clarificacion/data/remote/clarificacion_model.dart';
+import 'package:eventwine/core/app_constants.dart';
+import 'package:http/http.dart' as http;
 
 class ClarificacionService {
-  List<Clarificacion> obtenerClarificaciones() {
-    return [
-      Clarificacion(
-        id: 1,
-        loteId: 101,
-        productosUsados: 'Bentonita, Gel de Sílice',
-        metodoClarificacion: 'Filtración a baja presión',
-        fechaFiltracion: '2024-04-25',
-        nivelClaridad: 'Alta',
-        diaInicio: '2024-04-20',
-        diaFinal: '2024-04-25',
-      ),
-      Clarificacion(
-        id: 2,
-        loteId: 102,
-        productosUsados: 'Carbón Activado',
-        metodoClarificacion: 'Decantación natural',
-        fechaFiltracion: '2024-04-28',
-        nivelClaridad: 'Media',
-        diaInicio: '2024-04-23',
-        diaFinal: '2024-04-28',
-      ),
-      Clarificacion(
-        id: 3,
-        loteId: 103,
-        productosUsados: 'Bentonita',
-        metodoClarificacion: 'Filtración por membrana',
-        fechaFiltracion: '2024-04-30',
-        nivelClaridad: 'Muy alta',
-        diaInicio: '2024-04-26',
-        diaFinal: '2024-04-30',
-      ),
-    ];
+  Future<List<Clarificacion>> obtenerClarificacionesPorBatchId(int batchId) async {
+    final url = Uri.parse('${AppConstants.baseURL}/winemakingProcess/batch/$batchId/clarification');
+    print('➡️ Solicitando clarificaciones desde: $url');
+
+    try {
+      final response = await http.get(url, headers: {'Content-Type': 'application/json'});
+
+      print('📦 Status code: ${response.statusCode}');
+      print('📦 Body: ${response.body}');
+
+      if (response.statusCode == 200) {
+        final jsonData = jsonDecode(response.body);
+
+        if (jsonData is List) {
+          return jsonData.map((e) => Clarificacion.fromJson(e)).toList();
+        } else if (jsonData is Map<String, dynamic>) {
+          return [Clarificacion.fromJson(jsonData)];
+        }
+      }
+
+      print('❗ Error al obtener clarificaciones');
+      return [];
+    } catch (e) {
+      print('❌ Error de conexión al obtener clarificaciones: $e');
+      return [];
+    }
+  }
+
+  Future<Clarificacion?> crearClarificacion(int batchId, Clarificacion nuevaClarificacion) async {
+    final url = Uri.parse('${AppConstants.baseURL}/winemakingProcess/$batchId/clarification');
+    print('📤 Enviando nueva clarificación a: $url');
+
+    try {
+      final response = await http.post(
+        url,
+        headers: {'Content-Type': 'application/json'},
+        body: jsonEncode(nuevaClarificacion.toJson()),
+      );
+
+      print('📦 Status code: ${response.statusCode}');
+      print('📦 Body: ${response.body}');
+
+      if (response.statusCode == 201 || response.statusCode == 200) {
+        return Clarificacion.fromJson(jsonDecode(response.body));
+      } else {
+        print('❗ Error al crear clarificación: ${response.statusCode}');
+        return null;
+      }
+    } catch (e) {
+      print('❌ Error de conexión al crear clarificación: $e');
+      return null;
+    }
   }
 }
