@@ -5,7 +5,7 @@ class Anejo {
   final String diaInicio;
   final String diaFinal;
   final int duracionMeses;
-  final String inspeccionesRealizadas;
+  final int inspeccionesRealizadas;
   final String resultadoInspeccion;
 
   Anejo({
@@ -18,4 +18,28 @@ class Anejo {
     required this.inspeccionesRealizadas,
     required this.resultadoInspeccion,
   });
+
+  factory Anejo.fromJson(Map<String, dynamic> json) {
+    return Anejo(
+      id: json['id'],
+      loteId: json['batchId'],
+      tipoBarrica: json['barrelType'],
+      diaInicio: json['startDate'],
+      diaFinal: json['endDate'],
+      duracionMeses: json['agingDurationMonths'], // Matches API key
+      inspeccionesRealizadas: json['inspectionsPerformed'], // Expects int
+      resultadoInspeccion: json['inspectionResult'],
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'barrelType': tipoBarrica,
+      'startDate': diaInicio,
+      'endDate': diaFinal,
+      'agingDurationMonths': duracionMeses, // Matches API key
+      'inspectionsPerformed': inspeccionesRealizadas, // Sends int
+      'inspectionResult': resultadoInspeccion,
+    };
+  }
 }
