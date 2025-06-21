@@ -45,7 +45,6 @@ class _AnejoPageState extends State<AnejoPage> {
 
   final List<String> _resultadoOpciones = ['Óptimo', 'Bueno', 'Regular', 'Deficiente'];
 
-
   @override
   void initState() {
     super.initState();
@@ -170,11 +169,7 @@ class _AnejoPageState extends State<AnejoPage> {
                       child: Text(type),
                     );
                   }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedTipoBarrica = value;
-                    });
-                  },
+                  onChanged: (value) => setState(() => _selectedTipoBarrica = value),
                   validator: (value) => value == null ? 'Campo obligatorio' : null,
                 ),
                 TextFormField(
@@ -184,9 +179,7 @@ class _AnejoPageState extends State<AnejoPage> {
                     suffixIcon: Icon(Icons.calendar_today),
                   ),
                   readOnly: true,
-                  onTap: () async {
-                    await _pickDate(_diaInicioController);
-                  },
+                  onTap: () => _pickDate(_diaInicioController),
                   validator: (value) => value == null || value.isEmpty ? 'Campo obligatorio' : null,
                 ),
                 TextFormField(
@@ -196,9 +189,7 @@ class _AnejoPageState extends State<AnejoPage> {
                     suffixIcon: Icon(Icons.calendar_today),
                   ),
                   readOnly: true,
-                  onTap: () async {
-                    await _pickDate(_diaFinalController);
-                  },
+                  onTap: () => _pickDate(_diaFinalController),
                   validator: (value) => value == null || value.isEmpty ? 'Campo obligatorio' : null,
                 ),
                 TextFormField(
@@ -207,14 +198,9 @@ class _AnejoPageState extends State<AnejoPage> {
                   keyboardType: TextInputType.number,
                   readOnly: true,
                   validator: (value) {
-                    if (value == null || value.isEmpty) {
-                      return 'Seleccione ambas fechas para calcular la duración.';
-                    }
-                    if (int.tryParse(value) == null) {
-                      return 'Debe ser un número entero';
-                    }
-                    if (int.parse(value) <= 0) {
-                      return 'La duración debe ser mayor a 0.';
+                    if (value == null || value.isEmpty) return 'Seleccione ambas fechas.';
+                    if (int.tryParse(value) == null || int.parse(value) <= 0) {
+                      return 'Duración inválida';
                     }
                     return null;
                   },
@@ -226,11 +212,7 @@ class _AnejoPageState extends State<AnejoPage> {
                     DropdownMenuItem(value: true, child: Text('Sí')),
                     DropdownMenuItem(value: false, child: Text('No')),
                   ],
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedInspeccionesRealizadas = value;
-                    });
-                  },
+                  onChanged: (value) => setState(() => _selectedInspeccionesRealizadas = value),
                   validator: (value) => value == null ? 'Campo obligatorio' : null,
                 ),
                 DropdownButtonFormField<String>(
@@ -242,11 +224,7 @@ class _AnejoPageState extends State<AnejoPage> {
                       child: Text(opcion),
                     );
                   }).toList(),
-                  onChanged: (value) {
-                    setState(() {
-                      _selectedResultadoInspeccion = value;
-                    });
-                  },
+                  onChanged: (value) => setState(() => _selectedResultadoInspeccion = value),
                   validator: (value) => value == null ? 'Campo obligatorio' : null,
                 ),
               ],
@@ -273,8 +251,8 @@ class _AnejoPageState extends State<AnejoPage> {
                 );
 
                 if (anejo == null) {
-                  final createdAnejo = await _anejoService.crearAnejo(_selectedBatchId!, newAnejo);
-                  if (createdAnejo != null) {
+                  final created = await _anejoService.crearAnejo(_selectedBatchId!, newAnejo);
+                  if (created != null) {
                     Navigator.pop(context);
                     await _loadAnejos();
                     ScaffoldMessenger.of(context).showSnackBar(
@@ -287,7 +265,7 @@ class _AnejoPageState extends State<AnejoPage> {
                   }
                 } else {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('La edición de añejamientos no está implementada aún.')),
+                    const SnackBar(content: Text('La edición aún no está implementada.')),
                   );
                   Navigator.pop(context);
                 }
@@ -302,8 +280,6 @@ class _AnejoPageState extends State<AnejoPage> {
 
   @override
   Widget build(BuildContext context) {
-    final bool canCreateAnejo = _anejos.isEmpty;
-
     return Scaffold(
       appBar: AppBar(
         backgroundColor: const Color(0xFF743636),
@@ -311,29 +287,23 @@ class _AnejoPageState extends State<AnejoPage> {
         centerTitle: true,
         leading: IconButton(
           icon: const Icon(Icons.home),
-          onPressed: () {
-            Navigator.pushReplacement(
-              context,
-              MaterialPageRoute(builder: (context) => HomePage()),
-            );
-          },
+          onPressed: () => Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          ),
         ),
         title: SizedBox(
           height: 80,
-          child: Image.asset(
-            'assets/logo_eventwine.jpg',
-            fit: BoxFit.fitHeight,
-          ),
+          child: Image.asset('assets/logo_eventwine.jpg', fit: BoxFit.fitHeight),
         ),
       ),
       body: Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Título "Vinificación" centrado
-            Center(
-              child: const Text(
+            const Center(
+              child: Text(
                 'Vinificación',
                 style: TextStyle(
                   fontSize: 32,
@@ -346,8 +316,6 @@ class _AnejoPageState extends State<AnejoPage> {
               ),
             ),
             const SizedBox(height: 16),
-
-            // Cuadro de navegación de añejamientos centrado
             Center(
               child: Container(
                 padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
@@ -360,37 +328,29 @@ class _AnejoPageState extends State<AnejoPage> {
                   children: [
                     IconButton(
                       icon: const Icon(Icons.arrow_back_ios),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => PrensadoPage()),
-                        );
-                      },
+                      onPressed: () => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => PrensadoPage()),
+                      ),
                     ),
                     const SizedBox(width: 8),
                     const Text(
                       'Añejamientos',
-                      style: TextStyle(
-                        fontSize: 20,
-                        fontWeight: FontWeight.w600,
-                      ),
+                      style: TextStyle(fontSize: 20, fontWeight: FontWeight.w600),
                     ),
                     const SizedBox(width: 8),
                     IconButton(
                       icon: const Icon(Icons.arrow_forward_ios),
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => EmbotelladoPage()),
-                        );
-                      },
+                      onPressed: () => Navigator.pushReplacement(
+                        context,
+                        MaterialPageRoute(builder: (context) => EmbotelladoPage()),
+                      ),
                     ),
                   ],
                 ),
               ),
             ),
             const SizedBox(height: 16),
-
             DropdownButtonFormField<int>(
               value: _selectedBatchId,
               isExpanded: true,
@@ -405,27 +365,21 @@ class _AnejoPageState extends State<AnejoPage> {
                 );
               }).toList(),
               onChanged: (value) {
-                setState(() {
-                  _selectedBatchId = value;
-                });
+                setState(() => _selectedBatchId = value);
                 _loadAnejos();
               },
             ),
             const SizedBox(height: 12),
-
             TextField(
               controller: _searchController,
               decoration: InputDecoration(
                 hintText: 'Buscar por ID de Añejamiento',
                 prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
+                border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
               ),
               onChanged: _filtrarAnejos,
             ),
             const SizedBox(height: 16),
-
             Expanded(
               child: _loading
                   ? const Center(child: CircularProgressIndicator())
@@ -442,8 +396,7 @@ class _AnejoPageState extends State<AnejoPage> {
                             return Card(
                               margin: const EdgeInsets.symmetric(vertical: 8),
                               child: ListTile(
-                                contentPadding: const EdgeInsets.symmetric(
-                                    horizontal: 16, vertical: 12),
+                                contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
                                 leading: const Icon(Icons.wine_bar, color: Colors.deepPurple),
                                 title: Text('Añejamiento #${anejo.id}'),
                                 subtitle: Column(
@@ -503,7 +456,7 @@ class _AnejoPageState extends State<AnejoPage> {
         ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: canCreateAnejo
+      floatingActionButton: _anejos.isEmpty
           ? FloatingActionButton.extended(
               backgroundColor: Colors.amber,
               onPressed: () => _showAnejoForm(),

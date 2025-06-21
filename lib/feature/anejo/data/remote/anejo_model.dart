@@ -26,8 +26,8 @@ class Anejo {
       tipoBarrica: json['barrelType'],
       diaInicio: json['startDate'],
       diaFinal: json['endDate'],
-      duracionMeses: json['agingDurationMonths'], // Matches API key
-      inspeccionesRealizadas: json['inspectionsPerformed'], // Expects int
+      duracionMeses: json['agingDurationMonths'],
+      inspeccionesRealizadas: json['inspectionsPerformed'],
       resultadoInspeccion: json['inspectionResult'],
     );
   }
@@ -37,8 +37,8 @@ class Anejo {
       'barrelType': tipoBarrica,
       'startDate': diaInicio,
       'endDate': diaFinal,
-      'agingDurationMonths': duracionMeses, // Matches API key
-      'inspectionsPerformed': inspeccionesRealizadas, // Sends int
+      'agingDurationMonths': duracionMeses,
+      'inspectionsPerformed': inspeccionesRealizadas,
       'inspectionResult': resultadoInspeccion,
     };
   }
