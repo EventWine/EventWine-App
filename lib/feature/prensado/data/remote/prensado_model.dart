@@ -2,9 +2,9 @@ class Prensado {
   final int id;
   final int loteId;
   final String diaPrensado;
-  final String volumenMosto;
+  final double volumenMosto;
   final String tipoPrensa;
-  final String presionAplicada;
+  final double presionAplicada;
 
   Prensado({
     required this.id,
@@ -14,4 +14,24 @@ class Prensado {
     required this.tipoPrensa,
     required this.presionAplicada,
   });
+
+  factory Prensado.fromJson(Map<String, dynamic> json) {
+    return Prensado(
+      id: json['id'],
+      loteId: json['batchId'],
+      diaPrensado: json['pressingDate'],
+      volumenMosto: (json['mustVolume'] as num).toDouble(),
+      tipoPrensa: json['pressType'],
+      presionAplicada: (json['appliedPressure'] as num).toDouble(),
+    );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'pressingDate': diaPrensado,
+      'mustVolume': volumenMosto,
+      'pressType': tipoPrensa,
+      'appliedPressure': presionAplicada,
+    };
+  }
 }
